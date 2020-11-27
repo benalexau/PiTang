@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Optional script to "lock" Tang.
+#
+# This simply unmounted the encrypted file container, removes the mount,
+# and stops the Tang socket. It is fine to reboot the system without first
+# running this script (a freshly booted system cannot mount the container
+# as the encryption password is never stored anywhere; it must be entered
+# by root, typically via an SSH session).
+
+# Script abort on fail
+set -euo pipefail
+
+# Script verify existence of encrypted file container
+if [[ ! -f /root/tang.img ]]; then
+  echo "/root/tang.img not found: run 'pitang-setup' script"
+  exit 1
+fi
+
+# Stop Tang
+systemctl stop tangd.socket
+
+# Unmount
+umount /var/db/tang
+cryptsetup close tang

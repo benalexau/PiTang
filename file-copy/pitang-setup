@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Setup an encrypted file container to store Tang keys.
+#
+# This script also causes the initial Tang keys to be created and displays
+# console output that confirms successful operation of Tang.
+
+# Script abort on fail
+set -euo pipefail
+
+# Script exit if previously run
+if [[ -f /root/tang.img ]]; then
+  echo "Setup already run; aborting"
+  exit 1
+fi
+
+# Prepare Tang key file directory
+rm -rf /var/db/tang
+mkdir /var/db/tang
+
+# Set up an encrypted file container
+dd if=/dev/urandom of=/root/tang.img bs=1M count=100 iflag=fullblock
+cryptsetup luksFormat /root/tang.img
+cryptsetup open /root/tang.img tang
+mkfs.ext4 /dev/mapper/tang
+
+# Mount encrypted file container
+mount /dev/mapper/tang /var/db/tang
+
+# Run Tang so its initial keys are created
+systemctl start tangd.socket
+
+# Display keys so user can see that it worked
+echo "Key files:"
+ls -l /var/db/tang
+
+# Trigger an initial request
+curl -s http://127.0.0.1/adv > /dev/null
+
+# Restart Tang (otherwise curl below gives a 404)
+systemctl restart tangd.socket
+
+# Display public keys
+echo "Public keys:"
+curl http://127.0.0.1/adv
+echo
+
+# Stop Tang as we are about to close the encrypted file container
+systemctl stop tangd.socket
+
+# Unmount
+umount /var/db/tang
+cryptsetup close tang
+
+# Display SHA of encrypted file container (to assist with backups)
+sha256sum /root/tang.img
+
+echo "Use 'pitang-unlock' to start Tang when ready"
+echo "Recommendations:"
+echo "  * Backup /root/tang.img to any convenient location (it's encrypted)"
+echo "  * Use 'ro' to make this system read-ony (can reverse with 'rw')"

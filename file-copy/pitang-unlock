@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Unlocks the Tang encrypted file container and starts Tang.
+#
+# Tang should NEVER be enabled at a systemd level because we
+# require the encrypted file container to be mounted before Tang
+# services any requests. This is the purpose of this script.
+
+# Script abort on fail
+set -euo pipefail
+
+# Script verify existence of encrypted file container
+if [[ ! -f /root/tang.img ]]; then
+  echo "/root/tang.img not found: run the pitang-setup script"
+  exit 1
+fi
+
+# Open encrypted file container
+cryptsetup open /root/tang.img tang
+
+# Mount encrypted file container
+mount /dev/mapper/tang /var/db/tang
+
+# Run Tang
+systemctl start tangd.socket
+
+# Display public keys
+echo "Public keys:"
+curl http://127.0.0.1/adv
+
+# Display SHA of encrypted file container (to assist with backups)
+sha256sum /root/tang.img
