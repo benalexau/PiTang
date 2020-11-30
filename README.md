@@ -10,7 +10,7 @@ encrypted file system.
 * Tang keys are encrypted so that they cannot be used without a password
 * Optimised for widely available and low cost Raspberry Pi 4 hosts
 * Easy backup, restore and key rotation approaches for peace of mind
-* File systems operate in read-only (eliminating SD card wear failure modes)
+* File systems operate in read-only mode (eliminating SD card wear failure)
 * Prometheus enabled for easy HTTP-based monitoring
 * Easy, optional upgrades (minimal packages, rolling Arch Linux distribution) 
 
@@ -57,10 +57,14 @@ disk encryption keys etc) are probably worth considering.
 
 ## Getting Started
 
-You will need the *PiTang* Raspberry Pi image. You can download it from the
-[GitHub Releases](https://github.com/benalexau/PiTang/releases) page or build it
-yourself (instructions are towards the bottom of this file). Once the image is
-obtained, write it to an SD card using a command such as:
+You will need the *PiTang* Raspberry Pi image. You can build it yourself using
+the instructions at the bottom of this file, or you can download the latest
+image created by [GitHub Actions](https://github.com/benalexau/PiTang/actions)
+(these are built once per month and on pushes to this repository). To download
+the GitHub Actions build, select the most recent successful build (identified by
+a green tick) and then download the "PiTang Raspberry Pi 4" from "Artifacts".
+
+Write the image file to an SD card using a command such as:
 
 ```
 sudo dd if=pitang.img of=/dev/sdd bs=4M && sync
