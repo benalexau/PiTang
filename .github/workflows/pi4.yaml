@@ -1,0 +1,29 @@
+name: PiTang Raspberry Pi 4
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: PiTang Raspberry Pi 4 Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Build pitang.img
+        run: docker run --rm --privileged -v /dev:/dev -v ${PWD}:/build mkaczanowski/packer-builder-arm build pitang.json
+
+      - name: Install PiShrink
+        run: |
+          wget https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
+          chmod +x pishrink.sh
+          sudo mv pishrink.sh /usr/local/bin
+
+      - name: Shrink image using PiShrink
+        run: sudo pishrink.sh -a -Z -v pitang.img
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: PiTang Raspberry Pi 4
+          path: pitang.img.xz
