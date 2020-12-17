@@ -210,9 +210,9 @@ PACKER_LOG=1 sudo packer build pitang-rp4.json
 
 ## Contributing
 
-*PiTang* strongly prioritises operational reliability through simplicity,
-security and zero provisioning. Enhancements that reflect these priorities are
-most welcome.
+Pull requests that reflect the project's priorities (reliability, security) are
+welcome. If you would like to make more substantial changes or add new features,
+please firstly open a GitHub ticket so that we can discuss it.
 
 ## Support
 
