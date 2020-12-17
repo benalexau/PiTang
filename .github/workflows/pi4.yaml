@@ -14,14 +14,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
-      - name: Build pitang.img
-        run: docker run --rm --privileged -v /dev:/dev -v ${PWD}:/build mkaczanowski/packer-builder-arm build pitang.json
+      - name: Build pitang-rp4.img
+        run: docker run --rm --privileged -v /dev:/dev -v ${PWD}:/build mkaczanowski/packer-builder-arm build pitang-rp4.json
 
       - name: Compress output
-        run: sudo xz -9 pitang.img
+        run: sudo xz -9 pitang-rp4.img
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: PiTang Raspberry Pi 4
-          path: pitang.img.xz
+          path: pitang-rp4.img.xz

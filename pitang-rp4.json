@@ -9,7 +9,7 @@
     "file_unarchive_cmd": ["bsdtar", "-xpf", "$ARCHIVE_PATH", "-C", "$MOUNTPOINT"],
     "file_target_extension": "tar.gz",
     "image_build_method": "new",
-    "image_path": "pitang.img",
+    "image_path": "pitang-rp4.img",
     "image_size": "2G",
     "image_type": "dos",
     "image_partitions": [

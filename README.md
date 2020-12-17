@@ -67,7 +67,7 @@ a green tick) and then download the "PiTang Raspberry Pi 4" from "Artifacts".
 Write the image file to an SD card using a command such as:
 
 ```
-sudo dd if=pitang.img of=/dev/sdd bs=4M && sync
+sudo dd if=pitang-rp4.img of=/dev/sdd bs=4M && sync
 ```
 
 After writing the image file to an SD card and putting it in a Raspberry Pi,
@@ -205,7 +205,7 @@ to build a standard image file that can be written to SD cards.
 To build your own image, run:
 
 ```
-PACKER_LOG=1 sudo packer build pitang.json
+PACKER_LOG=1 sudo packer build pitang-rp4.json
 ```
 
 ## Contributing
