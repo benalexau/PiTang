@@ -77,7 +77,7 @@ it as root (the default password is also "root"). Then:
 1. Append your SSH key to `/root/.ssh/authorized_keys` (or use `ssh-copy-id`)
 2. Logout and login again over SSH to verify the certificate was used
 3. Edit `/etc/ssh/sshd_config`, changing `PermitRootLogin yes` to
-   `PermitRootLogin without-password` (`mg`, `vi` and `nano` are installed)
+   `PermitRootLogin prohibit-password` (`mg`, `vi` and `nano` are installed)
 4. Disable the root password using `passwd --lock root`
 5. Run `pitang-setup` and select a disk encryption password
 6. Run `ro` to make the system read only (this survives reboots)
