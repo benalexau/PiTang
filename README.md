@@ -9,6 +9,7 @@ server with encrypted key files on a Raspberry Pi 4 unit.
 * Tang keys are encrypted so that they cannot be used without a password
 * Optimised for widely available and low cost Raspberry Pi 4 hosts
 * Easy backup, restore and key rotation approaches for peace of mind
+* Optional automatic unlocking via [IP-Bound-HMAC](https://github.com/benalexau/IP-Bound-HMAC)
 * File systems operate in read-only mode (eliminating SD card wear failure)
 * [Prometheus](https://prometheus.io/) enabled for easy HTTP-based monitoring
 * Easy, optional upgrades (minimal packages, rolling
@@ -84,7 +85,7 @@ it as root (the default password is also "root"). Then:
 7. Copy `/root/tang.img` to a suitable remote location for backup
 8. You're finished, so it's time to `reboot` to verify everything works
 
-## Unlocking
+## Manual Unlocking
 
 The Tang keys are kept on an encrypted file system. This file system must be
 opened using the password you nominated in the `pitang-setup` step, mounted to
@@ -102,6 +103,26 @@ system. This is not strictly necessary; a `reboot` has the same consequence.
 The PiTang scripts use systemd to start and stop Tang at the appropriate times.
 Please do not use systemd to manually control Tang given the encrypted file
 systems may not be currently initialised, unlocked or mounted.
+
+## Automatic Unlocking with IP-Bound-HMAC
+
+The encrypted file system can also be automatically unlocked on boot. This
+relies on your PiTang server being on a network which has a static internet IP
+address and you trusting the public Cloudflare Workers deployment of
+[IP-Bound-HMAC](https://github.com/benalexau/IP-Bound-HMAC). To enable:
+
+1. SSH in as root
+2. Run `rw` to obtain a read-write file system
+3. Run `pitang-ip-bound-hmac-setup` to fetch the HMAC and enable
+4. Run `ro` to convert back to a read-only file system
+5. Copy `/root/tang.img` to a suitable remote location for backup
+6. Test with a `reboot`
+
+The above uses a timer that will attempt to run each minute after boot. It is
+still possible to unlock using the usual encryption password. If the IP address
+changes, repeat the above instructions (the old HMAC will be overwritten). If
+the setup is no longer desired, run `rw`, `pitang-ip-bound-hmac-remove` and then
+`ro`.
 
 ## Backup and Recovery
 

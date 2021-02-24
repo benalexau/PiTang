@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Add an IP-Bound-HMAC (https://github.com/benalexau/ip-bound-hmac) to keyslot 1
+# using the Cloudflare Worker at https://ip-bound-hmac.acegi.com.au/tang-key.
+#
+# This overwrites keyslot 1 with whatever IP-Bound-HMAC is now returned.
+
+# Script abort on fail
+set -euo pipefail
+
+# Script verify existence of encrypted file container
+if [[ ! -f /root/tang.img ]]; then
+    echo "/root/tang.img not found: run the pitang-setup script"
+    exit 1
+fi
+
+# Create temporary file name to store HMAC result (delete on exit)
+HMAC_RESULT=$(mktemp)
+trap "rm -rf $HMAC_RESULT" EXIT
+
+URL="https://ip-bound-hmac.acegi.com.au/tang-key"
+echo "Fetching from $URL"
+
+curl -s -o $HMAC_RESULT $URL
+echo "HMAC is $(cat $HMAC_RESULT)"
+
+# Kill keyslot 1 if it exists
+cryptsetup luksKillSlot /root/tang.img 1 || true
+
+# Add keyslot 1 using keyfile
+cryptsetup luksAddKey --key-slot 1 /root/tang.img $HMAC_RESULT
+
+systemctl enable pitang-ip-bound-hmac-unlock.timer
+systemctl start pitang-ip-bound-hmac-unlock.timer

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Remove IP-Bound-HMAC from keyslot 1.
+
+# Script abort on fail
+set -euo pipefail
+
+# Script verify existence of encrypted file container
+if [[ ! -f /root/tang.img ]]; then
+    echo "/root/tang.img not found: run the pitang-setup script"
+    exit 1
+fi
+
+# Kill keyslot 1
+cryptsetup luksKillSlot /root/tang.img 1
+
+systemctl disable pitang-ip-bound-hmac-unlock.timer
+systemctl stop pitang-ip-bound-hmac-unlock.timer

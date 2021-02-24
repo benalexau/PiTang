@@ -1,0 +1,10 @@
+[Unit]
+Description=Unlock PiTang via IP-Bound-HMAC
+DefaultDependencies=no
+After=network-online.target
+ConditionPathExists=!/var/db/tang/lost+found
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/pitang-ip-bound-hmac-unlock
+

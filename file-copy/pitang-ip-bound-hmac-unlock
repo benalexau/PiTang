@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Unlocks the Tang encrypted file container and starts Tang by using
+# the IP-Bound-HMAC (https://github.com/benalexau/ip-bound-hmac) deployed
+# using the Cloudflare Worker at https://ip-bound-hmac.acegi.com.au/tang-key.
+#
+# Use pitang-ip-bound-hmac-setup to add the correct HMAC to keyslot 1.
+
+# Script abort on fail
+set -euo pipefail
+
+# Script verify existence of encrypted file container
+if [[ ! -f /root/tang.img ]]; then
+    echo "/root/tang.img not found: run the pitang-setup script"
+    exit 1
+fi
+
+# Create temporary file name to store HMAC result (delete on exit)
+HMAC_RESULT=$(mktemp)
+trap "rm -rf $HMAC_RESULT" EXIT
+
+URL="https://ip-bound-hmac.acegi.com.au/tang-key"
+curl -s -o $HMAC_RESULT $URL
+
+# Open encrypted file container
+cryptsetup open --key-file $HMAC_RESULT /root/tang.img tang
+
+# Mount encrypted file container
+mount /dev/mapper/tang /var/db/tang
+
+# Run Tang
+systemctl start tangd.socket
+
+# Display public keys
+echo "Public keys:"
+curl http://127.0.0.1/adv
+
+# Display SHA of encrypted file container (to assist with backups)
+sha256sum /root/tang.img
