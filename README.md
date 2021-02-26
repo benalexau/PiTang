@@ -59,11 +59,9 @@ etc) are probably worth considering.
 ## Getting Started
 
 You will need the *PiTang* Raspberry Pi image. You can build it yourself using
-the instructions at the bottom of this file, or you can download the latest
-image created by [GitHub Actions](https://github.com/benalexau/PiTang/actions)
-(these are built once per month and on pushes to this repository). To download
-the GitHub Actions build, select the most recent successful build (identified by
-a green tick) and then download the "PiTang Raspberry Pi 4" from "Artifacts".
+the instructions at the bottom of this file, or you can [download the latest
+image](https://github.com/benalexau/PiTang/releases/tag/latest) created by
+[GitHub Actions](https://github.com/benalexau/PiTang/actions).
 
 Write the image file to an SD card using a command such as:
 
